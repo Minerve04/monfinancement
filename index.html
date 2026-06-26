@@ -307,6 +307,54 @@
       background: rgba(255,255,255,.15); color: white; border: none;
       border-radius: 10px; font-size: .88rem; cursor: pointer;
     }
+
+    /* ── MODAL CONTACT ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(15,23,42,.6); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-card {
+      background: white; border-radius: 18px; padding: 32px 28px;
+      width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      position: relative; animation: slideUp .25s ease;
+      max-height: 90vh; overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--gray-100); border: none; border-radius: 50%;
+      width: 32px; height: 32px; cursor: pointer; font-size: .9rem;
+      color: var(--gray-600); display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { background: var(--gray-200); }
+    .modal-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .modal-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 6px; color: var(--gray-900); }
+    .modal-sub { font-size: .88rem; color: var(--gray-600); margin-bottom: 22px; }
+    .contact-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-label { font-size: .82rem; font-weight: 600; color: var(--gray-700); }
+    .form-input {
+      padding: 11px 13px; border: 2px solid var(--gray-200); border-radius: 10px;
+      font-size: .93rem; outline: none; transition: border-color .15s;
+      font-family: inherit;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .modal-rgpd { font-size: .75rem; color: var(--gray-400); line-height: 1.5; }
+    .btn-submit-contact {
+      width: 100%; padding: 14px; background: var(--accent); color: white;
+      border: none; border-radius: 11px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-submit-contact:hover { background: var(--accent-dark); }
+    .btn-submit-contact:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+    .contact-success { text-align: center; padding: 20px 0; }
   </style>
 </head>
 <body>
@@ -379,12 +427,49 @@
     <div class="cta-box">
       <h3>Besoin d'aide pour monter vos dossiers ?</h3>
       <p>Nos partenaires experts-comptables et conseillers BPI peuvent vous accompagner pas à pas.</p>
-      <button class="btn-cta">Être mis en relation →</button>
+      <button class="btn-cta" onclick="openContactModal()">Être mis en relation →</button>
       <button class="btn-restart" onclick="restart()">↩ Refaire le diagnostic</button>
     </div>
   </div>
 
 </main>
+
+<!-- ══ MODAL CONTACT ══ -->
+<div class="modal-overlay" id="contactModal" onclick="closeContactModal(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeContactModal()">✕</button>
+    <div class="modal-icon">🤝</div>
+    <h2 class="modal-title">Être mis en relation</h2>
+    <p class="modal-sub">Un conseiller vous contacte sous 48h pour vous aider à monter vos dossiers d'aides.</p>
+    <form class="contact-form" onsubmit="submitContact(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Prénom *</label>
+          <input class="form-input" type="text" id="c_prenom" placeholder="Marie" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nom *</label>
+          <input class="form-input" type="text" id="c_nom" placeholder="Dupont" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email *</label>
+        <input class="form-input" type="email" id="c_email" placeholder="marie@exemple.fr" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Téléphone *</label>
+        <input class="form-input" type="tel" id="c_tel" placeholder="06 12 34 56 78" required>
+      </div>
+      <p class="modal-rgpd">Vos données sont utilisées uniquement pour vous recontacter. Conformément au RGPD, vous pouvez exercer vos droits à tout moment.</p>
+      <button class="btn-submit-contact" type="submit" id="contactSubmitBtn">Envoyer ma demande →</button>
+    </form>
+    <div class="contact-success" id="contactSuccess" style="display:none">
+      <div style="font-size:2.5rem;margin-bottom:12px">✅</div>
+      <div style="font-weight:800;font-size:1.1rem;margin-bottom:8px">Demande envoyée !</div>
+      <div style="font-size:.9rem;color:var(--gray-600)">Un conseiller vous contactera sous 48h.</div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════
@@ -1011,6 +1096,61 @@ function sendToSheets(email) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   }).catch(() => {});
+}
+
+// ══════════════════════════════════════════════════
+//  MODAL CONTACT
+// ══════════════════════════════════════════════════
+
+function openContactModal() {
+  document.getElementById('contactModal').classList.add('open');
+  document.getElementById('contactSuccess').style.display = 'none';
+  document.querySelector('.contact-form').style.display = 'flex';
+  document.getElementById('contactSubmitBtn').disabled = false;
+  document.getElementById('contactSubmitBtn').textContent = 'Envoyer ma demande →';
+}
+
+function closeContactModal(e) {
+  if (e && e.target !== document.getElementById('contactModal')) return;
+  document.getElementById('contactModal').classList.remove('open');
+}
+
+function submitContact(e) {
+  e.preventDefault();
+  const prenom  = document.getElementById('c_prenom').value.trim();
+  const nom     = document.getElementById('c_nom').value.trim();
+  const email   = document.getElementById('c_email').value.trim();
+  const tel     = document.getElementById('c_tel').value.trim();
+  const btn     = document.getElementById('contactSubmitBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+
+  const data = {
+    type: 'contact',
+    prenom, nom, email, telephone: tel,
+    date: new Date().toISOString(),
+    statut:    responses.statut    || '',
+    secteur:   responses.secteur   || '',
+    situation: responses.situation || '',
+    territoire:responses.territoire|| '',
+    besoins:   responses.besoins   || '',
+    montant:   responses.montant   || '',
+    nb_aides:  matchedAides.length,
+  };
+
+  if (SHEETS_URL.startsWith('http')) {
+    fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }).catch(() => {});
+  }
+
+  setTimeout(() => {
+    document.querySelector('.contact-form').style.display = 'none';
+    document.getElementById('contactSuccess').style.display = 'block';
+  }, 800);
 }
 
 // ══════════════════════════════════════════════════
