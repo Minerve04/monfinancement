@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MonFinancement.fr — Trouvez vos aides en 5 minutes</title>
+  <meta name="description" content="Découvrez toutes les aides, subventions et financements auxquels votre projet a droit. Gratuit, rapide, sans inscription.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:       #0f172a;
+      --primary-light: #1e293b;
+      --accent:        #6366f1;
+      --accent-light:  #eef2ff;
+      --accent-dark:   #4338ca;
+      --success:       #059669;
+      --success-light: #d1fae5;
+      --warning:       #d97706;
+      --warning-light: #fef3c7;
+      --gray-50:  #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-900: #0f172a;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 14px 20px 12px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.2);
+    }
+    .header-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo {
+      font-size: 1.2rem; font-weight: 800; letter-spacing: -.5px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .logo-icon { font-size: 1.4rem; }
+    .logo span { color: #818cf8; }
+    .progress-bar { height: 3px; background: rgba(255,255,255,.15); border-radius: 2px; margin-top: 8px; }
+    .progress-fill { height: 100%; background: #818cf8; border-radius: 2px; transition: width .4s ease; }
+    .step-lbl { font-size: .78rem; color: rgba(255,255,255,.6); margin-left: auto; white-space: nowrap; }
+
+    /* ── MAIN ── */
+    .main { max-width: 680px; margin: 0 auto; padding: 28px 16px 80px; }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeUp .25s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── INTRO ── */
+    .intro-hero {
+      background: white; border-radius: var(--radius);
+      padding: 36px 28px 32px; text-align: center;
+      box-shadow: var(--shadow-md); margin-bottom: 16px;
+      border-top: 4px solid var(--accent);
+    }
+    .intro-badge {
+      display: inline-block; background: var(--accent-light); color: var(--accent);
+      font-size: .78rem; font-weight: 700; letter-spacing: .5px;
+      text-transform: uppercase; padding: 5px 14px; border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    .intro-title {
+      font-size: 1.75rem; font-weight: 900; color: var(--primary);
+      line-height: 1.2; margin-bottom: 12px;
+    }
+    .intro-title span { color: var(--accent); }
+    .intro-sub { font-size: 1rem; color: var(--gray-600); margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 28px; }
+    .stat { background: var(--gray-50); border-radius: 10px; padding: 14px 8px; text-align: center; border: 1px solid var(--gray-200); }
+    .stat-n { font-size: 1.5rem; font-weight: 900; color: var(--accent); display: block; }
+    .stat-l { font-size: .72rem; color: var(--gray-600); display: block; margin-top: 2px; }
+    .btn-start {
+      display: block; width: 100%; padding: 16px;
+      background: var(--accent); color: white; border: none;
+      border-radius: var(--radius); font-size: 1.05rem; font-weight: 700;
+      cursor: pointer; transition: background .2s, transform .1s;
+      letter-spacing: -.2px;
+    }
+    .btn-start:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .intro-note { font-size: .78rem; color: var(--gray-400); margin-top: 10px; }
+    .trust-row {
+      display: flex; align-items: center; justify-content: center; gap: 18px;
+      flex-wrap: wrap; font-size: .82rem; color: var(--gray-600);
+      background: white; border-radius: var(--radius); padding: 16px 20px;
+      box-shadow: var(--shadow);
+    }
+    .trust-item { display: flex; align-items: center; gap: 6px; }
+
+    /* ── QUESTION CARD ── */
+    .q-card {
+      background: white; border-radius: var(--radius);
+      padding: 28px 24px 24px; box-shadow: var(--shadow-md);
+    }
+    .q-step {
+      font-size: .72rem; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px;
+    }
+    .q-text { font-size: 1.15rem; font-weight: 800; color: var(--gray-900); margin-bottom: 6px; line-height: 1.3; }
+    .q-hint { font-size: .83rem; color: var(--gray-600); margin-bottom: 22px; }
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border: 2px solid var(--gray-200);
+      border-radius: 11px; cursor: pointer; background: white;
+      text-align: left; width: 100%; font-size: .92rem; color: var(--gray-700);
+      transition: border-color .15s, background .15s;
+    }
+    .option:hover { border-color: var(--accent); background: var(--accent-light); }
+    .option.selected { border-color: var(--accent); background: var(--accent-light); }
+    .opt-icon { font-size: 1.4rem; flex-shrink: 0; width: 36px; text-align: center; }
+    .opt-label { font-weight: 600; color: var(--gray-900); display: block; }
+    .opt-desc { font-size: .8rem; color: var(--gray-600); display: block; margin-top: 2px; }
+    .nav-row { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-back {
+      padding: 12px 20px; border: 2px solid var(--gray-200);
+      border-radius: 10px; background: white; cursor: pointer;
+      font-size: .9rem; color: var(--gray-600); font-weight: 600;
+      transition: border-color .15s;
+    }
+    .btn-back:hover { border-color: var(--gray-400); }
+    .btn-next {
+      flex: 1; padding: 13px; background: var(--accent); color: white;
+      border: none; border-radius: 10px; font-size: .95rem; font-weight: 700;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-next:hover { background: var(--accent-dark); }
+    .btn-next:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+
+    /* ── EMAIL SCREEN ── */
+    .email-card {
+      background: white; border-radius: var(--radius);
+      padding: 28px 24px; box-shadow: var(--shadow-md);
+    }
+    .email-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .email-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+    .email-sub { font-size: .9rem; color: var(--gray-600); margin-bottom: 22px; }
+    .email-preview {
+      background: var(--gray-50); border-radius: 10px; padding: 14px 16px;
+      margin-bottom: 22px; border: 1px solid var(--gray-200);
+    }
+    .email-preview p { font-size: .82rem; color: var(--gray-600); margin-bottom: 8px; font-weight: 600; }
+    .preview-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 0; border-bottom: 1px solid var(--gray-200);
+      font-size: .85rem; color: var(--gray-700);
+    }
+    .preview-item:last-child { border-bottom: none; }
+    .preview-euro { font-weight: 700; color: var(--success); margin-left: auto; white-space: nowrap; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; font-size: .85rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+    .input-group input {
+      width: 100%; padding: 12px 14px; border: 2px solid var(--gray-200);
+      border-radius: 10px; font-size: .95rem; outline: none;
+      transition: border-color .15s;
+    }
+    .input-group input:focus { border-color: var(--accent); }
+    .rgpd { font-size: .76rem; color: var(--gray-400); margin-bottom: 18px; line-height: 1.5; }
+    .rgpd a { color: var(--accent); }
+    .btn-results {
+      display: block; width: 100%; padding: 15px;
+      background: var(--accent); color: white; border: none;
+      border-radius: 12px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-results:hover { background: var(--accent-dark); }
+    .btn-skip {
+      display: block; width: 100%; padding: 10px; margin-top: 10px;
+      background: none; border: none; color: var(--gray-400); cursor: pointer;
+      font-size: .85rem; text-decoration: underline;
+    }
+
+    /* ── RESULTS ── */
+    .results-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #1e1b4b 100%);
+      color: white; border-radius: var(--radius); padding: 28px 24px;
+      margin-bottom: 16px; box-shadow: var(--shadow-md);
+    }
+    .results-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+    .results-sub { font-size: .9rem; color: rgba(255,255,255,.75); margin-bottom: 18px; }
+    .results-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+    .results-badge {
+      background: rgba(255,255,255,.15); backdrop-filter: blur(4px);
+      border-radius: 8px; padding: 8px 14px; font-size: .85rem; font-weight: 600;
+    }
+    .results-badge span { color: #a5b4fc; }
+
+    .section-title {
+      font-size: .75rem; font-weight: 700; color: var(--gray-400);
+      text-transform: uppercase; letter-spacing: .8px;
+      padding: 14px 0 8px; margin-top: 4px;
+    }
+
+    .aide-card {
+      background: white; border-radius: var(--radius);
+      padding: 18px 20px; box-shadow: var(--shadow);
+      margin-bottom: 10px; border-left: 4px solid transparent;
+      transition: box-shadow .15s;
+    }
+    .aide-card:hover { box-shadow: var(--shadow-md); }
+    .aide-card.priority { border-left-color: var(--accent); }
+    .aide-card.success-border { border-left-color: var(--success); }
+    .aide-card.warning-border { border-left-color: var(--warning); }
+
+    .aide-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+    .aide-emoji { font-size: 1.6rem; flex-shrink: 0; }
+    .aide-name { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 2px; }
+    .aide-org { font-size: .78rem; color: var(--gray-600); font-weight: 500; }
+    .aide-amount {
+      margin-left: auto; text-align: right; flex-shrink: 0;
+    }
+    .aide-amount-main { font-size: 1rem; font-weight: 800; color: var(--success); white-space: nowrap; }
+    .aide-amount-type { font-size: .72rem; color: var(--gray-400); }
+    .aide-desc { font-size: .85rem; color: var(--gray-600); line-height: 1.55; margin-bottom: 10px; }
+    .tags-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      font-size: .72rem; font-weight: 600; padding: 3px 9px;
+      border-radius: 999px; background: var(--gray-100); color: var(--gray-600);
+    }
+    .tag.green { background: var(--success-light); color: var(--success); }
+    .tag.blue { background: var(--accent-light); color: var(--accent); }
+    .tag.orange { background: var(--warning-light); color: var(--warning); }
+
+    .total-box {
+      background: var(--success-light); border-radius: var(--radius);
+      padding: 18px 20px; margin: 16px 0; display: flex;
+      align-items: center; gap: 14px; border: 1px solid #6ee7b7;
+    }
+    .total-icon { font-size: 1.8rem; }
+    .total-label { font-size: .85rem; color: var(--gray-600); }
+    .total-amount { font-size: 1.4rem; font-weight: 900; color: var(--success); }
+
+    .cta-box {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: white; border-radius: var(--radius); padding: 22px 24px;
+      text-align: center; margin-top: 20px;
+    }
+    .cta-box h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+    .cta-box p { font-size: .88rem; color: rgba(255,255,255,.8); margin-bottom: 18px; }
+    .btn-cta {
+      display: inline-block; padding: 13px 28px;
+      background: white; color: var(--accent); border: none;
+      border-radius: 10px; font-size: .95rem; font-weight: 700;
+      cursor: pointer; transition: transform .15s;
+    }
+    .btn-cta:hover { transform: translateY(-1px); }
+    .btn-restart {
+      display: block; width: 100%; margin-top: 12px; padding: 11px;
+      background: rgba(255,255,255,.15); color: white; border: none;
+      border-radius: 10px; font-size: .88rem; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo"><span class="logo-icon">💰</span> Mon<span>Financement</span>.fr</div>
+    <span class="step-lbl" id="stepLabel"></span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</header>
+
+<main class="main">
+
+  <!-- ══════════════════════ INTRO ══════════════════════ -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-hero">
+      <div class="intro-badge">✨ 100% gratuit · Sans inscription</div>
+      <h1 class="intro-title">Trouvez toutes les aides<br>pour <span>votre projet</span></h1>
+      <p class="intro-sub">Subventions, exonérations, prêts à taux zéro, aides à l'embauche… découvrez ce à quoi vous avez vraiment droit en 5 minutes.</p>
+      <div class="stats-row">
+        <div class="stat"><span class="stat-n">80+</span><span class="stat-l">Dispositifs référencés</span></div>
+        <div class="stat"><span class="stat-n">50k€</span><span class="stat-l">Moyenne trouvée</span></div>
+        <div class="stat"><span class="stat-n">5 min</span><span class="stat-l">Chrono</span></div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">Découvrir mes aides →</button>
+      <p class="intro-note">🔒 Anonyme · Aucune donnée vendue</p>
+    </div>
+    <div class="trust-row">
+      <div class="trust-item">🏦 <span>BPI France</span></div>
+      <div class="trust-item">🏛️ <span>Aides régionales</span></div>
+      <div class="trust-item">📋 <span>ACRE · ARCE</span></div>
+      <div class="trust-item">🌱 <span>ADEME</span></div>
+      <div class="trust-item">💼 <span>Aides emploi</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ QUESTIONS ══════════════════════ -->
+  <div class="screen" id="screen-q"></div>
+
+  <!-- ══════════════════════ EMAIL ══════════════════════ -->
+  <div class="screen" id="screen-email">
+    <div class="email-card">
+      <div class="email-icon">🎯</div>
+      <div class="email-title">Vos résultats sont prêts !</div>
+      <div class="email-sub">Laissez votre email pour recevoir votre liste complète d'aides avec les montants, conditions et démarches.</div>
+      <div class="email-preview">
+        <p>Aperçu de vos aides identifiées :</p>
+        <div id="emailPreview"></div>
+      </div>
+      <div class="input-group">
+        <label>Votre email professionnel</label>
+        <input type="email" id="emailInput" placeholder="vous@exemple.fr">
+      </div>
+      <p class="rgpd">En cliquant sur "Voir mes aides", vous acceptez de recevoir votre récapitulatif par email. Données utilisées uniquement pour vous envoyer vos résultats. Conformément au RGPD, vous pouvez exercer vos droits à tout moment.</p>
+      <button class="btn-results" onclick="showResults()">Voir mes aides complètes →</button>
+      <button class="btn-skip" onclick="showResults()">Continuer sans email</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ RESULTS ══════════════════════ -->
+  <div class="screen" id="screen-results">
+    <div class="results-header">
+      <div class="results-title" id="resultsTitle"></div>
+      <div class="results-sub" id="resultsSub"></div>
+      <div class="results-meta" id="resultsMeta"></div>
+    </div>
+    <div id="resultsContent"></div>
+    <div class="cta-box">
+      <h3>Besoin d'aide pour monter vos dossiers ?</h3>
+      <p>Nos partenaires experts-comptables et conseillers BPI peuvent vous accompagner pas à pas.</p>
+      <button class="btn-cta">Être mis en relation →</button>
+      <button class="btn-restart" onclick="restart()">↩ Refaire le diagnostic</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════
+
+const QUESTIONS = [
+  {
+    id: 'statut',
+    step: 'Étape 1 / 6 — Votre situation',
+    text: 'Où en êtes-vous dans votre projet ?',
+    hint: 'Cela détermine les dispositifs accessibles.',
+    options: [
+      { val: 'idee',       icon: '💡', label: 'J\'ai une idée',           desc: 'Je réfléchis encore à mon projet' },
+      { val: 'creation',   icon: '🚀', label: 'En cours de création',      desc: 'Moins de 3 ans d\'existence' },
+      { val: 'reprise',    icon: '🏭', label: 'Reprise d\'entreprise',      desc: 'J\'achète ou reprends une activité' },
+      { val: 'existante',  icon: '📈', label: 'Entreprise existante',       desc: 'Plus de 3 ans, je cherche à grandir' },
+    ]
+  },
+  {
+    id: 'secteur',
+    step: 'Étape 2 / 6 — Votre secteur',
+    text: 'Dans quel secteur exercez-vous (ou souhaitez-vous exercer) ?',
+    hint: 'Certaines aides sont réservées à des secteurs spécifiques.',
+    options: [
+      { val: 'commerce',    icon: '🛍️', label: 'Commerce / Artisanat',      desc: 'Boutique, restaurant, artisan…' },
+      { val: 'service',     icon: '💼', label: 'Services aux entreprises',   desc: 'Conseil, compta, RH, IT…' },
+      { val: 'tech',        icon: '💻', label: 'Tech / Innovation',          desc: 'Startup, numérique, R&D…' },
+      { val: 'industrie',   icon: '🏗️', label: 'Industrie / BTP',            desc: 'Production, construction…' },
+      { val: 'agri',        icon: '🌾', label: 'Agriculture / Alimentation', desc: 'Farming, agroalimentaire…' },
+      { val: 'social',      icon: '🤝', label: 'ESS / Impact social',        desc: 'Association, SCOP, social…' },
+    ]
+  },
+  {
+    id: 'situation',
+    step: 'Étape 3 / 6 — Votre situation personnelle',
+    text: 'Êtes-vous actuellement…',
+    hint: 'Certains dispositifs sont réservés à des profils spécifiques.',
+    options: [
+      { val: 'demandeur',  icon: '📋', label: 'Demandeur d\'emploi',       desc: 'Inscrit à France Travail' },
+      { val: 'salarie',    icon: '👔', label: 'Salarié(e)',                  desc: 'En poste, en reconversion' },
+      { val: 'etudiant',   icon: '🎓', label: 'Étudiant(e) / Jeune -26 ans', desc: 'Ou récemment diplômé' },
+      { val: 'deja_indep', icon: '🧑‍💼', label: 'Déjà indépendant(e)',        desc: 'Auto-entrepreneur, gérant…' },
+    ]
+  },
+  {
+    id: 'territoire',
+    step: 'Étape 4 / 6 — Votre territoire',
+    text: 'Votre projet est situé dans…',
+    hint: 'Les aides régionales et locales varient selon la zone.',
+    options: [
+      { val: 'qpv',        icon: '🏙️', label: 'Zone prioritaire (QPV/ZFU)', desc: 'Quartier prioritaire ou zone franche' },
+      { val: 'rural',      icon: '🌲', label: 'Zone rurale / ZRR',           desc: 'Petite commune, zone de revitalisation' },
+      { val: 'outremer',   icon: '🌊', label: 'Outre-mer (DOM-COM)',         desc: 'Réunion, Martinique, Guadeloupe…' },
+      { val: 'classique',  icon: '🏢', label: 'Zone urbaine classique',      desc: 'Ville hors dispositif spécial' },
+    ]
+  },
+  {
+    id: 'besoins',
+    step: 'Étape 5 / 6 — Vos besoins de financement',
+    text: 'De quoi avez-vous le plus besoin ?',
+    hint: 'Sélectionnez votre priorité principale.',
+    options: [
+      { val: 'lancement',  icon: '🔑', label: 'Capital de démarrage',       desc: 'Financer le lancement / les premiers mois' },
+      { val: 'investissement', icon: '⚙️', label: 'Investissement matériel', desc: 'Équipements, locaux, machines' },
+      { val: 'embauche',   icon: '👥', label: 'Recrutement',                 desc: 'Aides à l\'embauche, formation' },
+      { val: 'innovation', icon: '🔬', label: 'R&D / Innovation',            desc: 'Développer un produit ou un service' },
+      { val: 'tresorerie', icon: '💳', label: 'Trésorerie',                  desc: 'Besoin de liquidités à court terme' },
+    ]
+  },
+  {
+    id: 'montant',
+    step: 'Étape 6 / 6 — Votre besoin de financement',
+    text: 'De quel montant avez-vous besoin ?',
+    hint: 'Pour identifier les dispositifs adaptés à votre échelle.',
+    options: [
+      { val: 'moins5k',    icon: '🌱', label: 'Moins de 5 000 €',           desc: 'Micro-projet, test de marché' },
+      { val: '5a25k',      icon: '🌿', label: '5 000 € – 25 000 €',         desc: 'Lancement ou petit investissement' },
+      { val: '25a100k',    icon: '🌳', label: '25 000 € – 100 000 €',       desc: 'Projet structuré' },
+      { val: 'plus100k',   icon: '🏔️', label: 'Plus de 100 000 €',          desc: 'Projet ambitieux / scale-up' },
+    ]
+  },
+];
+
+// ══════════════════════════════════════════════════
+//  AIDES DATABASE
+// ══════════════════════════════════════════════════
+
+const AIDES_DB = [
+  // ── Création générale ──
+  {
+    id: 'acre', name: 'ACRE', org: 'URSSAF', emoji: '💰',
+    montant: 'Exonération charges', type: 'Exonération 1 an',
+    desc: 'Exonération partielle de cotisations sociales pendant la première année d\'activité. Accessible à la quasi-totalité des créateurs.',
+    tags: ['Création', 'Charges sociales', 'Universel'],
+    tagClass: 'green',
+    if: (r) => ['idee','creation','reprise'].includes(r.statut),
+    priorite: 10,
+  },
+  {
+    id: 'arce', name: 'ARCE', org: 'France Travail', emoji: '📋',
+    montant: '60% des ARE', type: 'Capital',
+    desc: 'Permet de recevoir 60% des allocations chômage restantes en capital plutôt qu\'en mensuel. Idéal pour financer le démarrage.',
+    tags: ['Demandeurs d\'emploi', 'Capital', 'France Travail'],
+    tagClass: 'blue',
+    if: (r) => r.situation === 'demandeur',
+    priorite: 10,
+  },
+  {
+    id: 'nacre', name: 'NACRE', org: 'Caisse des Dépôts', emoji: '🏦',
+    montant: 'Prêt 0% jusqu\'à 10 000€', type: 'Prêt taux zéro',
+    desc: 'Accompagnement et prêt sans intérêts pour les créateurs en situation de chômage ou bénéficiaires de minima sociaux. Dossier via opérateur agréé.',
+    tags: ['Demandeurs d\'emploi', 'Prêt 0%', 'Accompagnement'],
+    tagClass: 'green',
+    if: (r) => r.situation === 'demandeur' && ['idee','creation'].includes(r.statut),
+    priorite: 9,
+  },
+  {
+    id: 'cape', name: 'CAPE', org: 'Couveuse d\'entreprises', emoji: '🥚',
+    montant: 'Protection salariat', type: 'Statut',
+    desc: 'Contrat d\'Appui au Projet d\'Entreprise : testez votre activité avec le statut de salarié, tout en gardant vos allocations.',
+    tags: ['Test activité', 'Salariat', 'Sécurité'],
+    tagClass: 'blue',
+    if: (r) => ['idee','creation'].includes(r.statut) && ['demandeur','salarie'].includes(r.situation),
+    priorite: 7,
+  },
+  // ── Innovation / Tech ──
+  {
+    id: 'jei', name: 'JEI — Jeune Entreprise Innovante', org: 'DGFiP', emoji: '🔬',
+    montant: 'Exonération IS + charges', type: 'Exonération fiscale',
+    desc: 'Exonération d\'impôt sur les sociétés (IS) et de charges sociales sur les chercheurs et ingénieurs pour les entreprises innovantes de moins de 8 ans.',
+    tags: ['Tech / Innovation', 'Fiscal', 'R&D'],
+    tagClass: 'blue',
+    if: (r) => r.secteur === 'tech' && ['creation','existante'].includes(r.statut),
+    priorite: 10,
+  },
+  {
+    id: 'cir', name: 'CIR — Crédit Impôt Recherche', org: 'DGFiP', emoji: '🧪',
+    montant: '30% des dépenses R&D', type: 'Crédit d\'impôt',
+    desc: 'Crédit d\'impôt de 30% des dépenses de recherche et développement. L\'un des dispositifs les plus puissants pour les entreprises innovantes.',
+    tags: ['R&D', 'Crédit d\'impôt', 'Innovation'],
+    tagClass: 'blue',
+    if: (r) => ['tech','industrie'].includes(r.secteur) && r.besoins === 'innovation',
+    priorite: 10,
+  },
+  {
+    id: 'bpi_inno', name: 'Bourse French Tech', org: 'BPI France', emoji: '🚀',
+    montant: 'Jusqu\'à 30 000€', type: 'Subvention',
+    desc: 'Subvention BPI France pour les startups en phase d\'idéation ou d\'amorçage, afin de financer la faisabilité d\'un projet innovant.',
+    tags: ['Startup', 'Subvention', 'BPI France'],
+    tagClass: 'blue',
+    if: (r) => r.secteur === 'tech' && ['idee','creation'].includes(r.statut),
+    priorite: 9,
+  },
+  // ── Zones prioritaires ──
+  {
+    id: 'zfu', name: 'Exonération ZFU', org: 'DGFiP', emoji: '🏙️',
+    montant: 'Exonération IS 5 ans', type: 'Exonération fiscale',
+    desc: 'Exonération totale d\'impôt sur les bénéfices pendant 5 ans pour les entreprises créées dans les Zones Franches Urbaines, puis partielle 3 ans.',
+    tags: ['Zone franche', 'IS', 'Fiscal'],
+    tagClass: 'orange',
+    if: (r) => r.territoire === 'qpv',
+    priorite: 10,
+  },
+  {
+    id: 'zrr', name: 'Exonération ZRR', org: 'DGFiP', emoji: '🌲',
+    montant: 'Exonération IS + charges', type: 'Exonération fiscale',
+    desc: 'Exonération d\'IS et de charges sociales pendant 5 ans pour les entreprises créées en Zone de Revitalisation Rurale. Idéal pour les projets en territoire rural.',
+    tags: ['Zone rurale', 'IS', 'Charges'],
+    tagClass: 'green',
+    if: (r) => r.territoire === 'rural',
+    priorite: 10,
+  },
+  // ── Outre-mer ──
+  {
+    id: 'lodeom', name: 'Défiscalisation Outre-Mer (LODEOM)', org: 'DGFiP', emoji: '🌊',
+    montant: 'Réduction IS significative', type: 'Défiscalisation',
+    desc: 'Dispositifs de défiscalisation et d\'exonérations de charges renforcées pour les entreprises des DOM-COM. Avantages fiscaux exceptionnels.',
+    tags: ['Outre-mer', 'Fiscal', 'Charges'],
+    tagClass: 'blue',
+    if: (r) => r.territoire === 'outremer',
+    priorite: 10,
+  },
+  // ── ESS ──
+  {
+    id: 'pties_villes', name: 'Aide Petites Villes de Demain', org: 'ANCT', emoji: '🏘️',
+    montant: 'Subvention variable', type: 'Subvention',
+    desc: 'Programme national de soutien aux commerces et services dans les petites villes. Financement partiel des investissements matériels et des travaux.',
+    tags: ['Commerce', 'Revitalisation', 'Subvention'],
+    tagClass: 'orange',
+    if: (r) => ['commerce','service'].includes(r.secteur) && r.territoire === 'rural',
+    priorite: 8,
+  },
+  // ── Embauche ──
+  {
+    id: 'aide_apprenti', name: 'Aide à l\'apprentissage', org: 'État', emoji: '🎓',
+    montant: 'Jusqu\'à 6 000€/an', type: 'Subvention',
+    desc: 'Aide financière de l\'État pour l\'embauche d\'un apprenti. Jusqu\'à 6 000€ la première année, reconductible selon l\'effectif.',
+    tags: ['Apprentissage', 'Embauche', 'Formation'],
+    tagClass: 'green',
+    if: (r) => r.besoins === 'embauche',
+    priorite: 9,
+  },
+  {
+    id: 'aide_handicap', name: 'AGEFIPH — Aide recrutement TH', org: 'AGEFIPH', emoji: '♿',
+    montant: 'Jusqu\'à 4 000€', type: 'Aide',
+    desc: 'Aide financière pour l\'embauche d\'une personne en situation de handicap : prime à l\'insertion, adaptation du poste de travail.',
+    tags: ['Handicap', 'Embauche', 'AGEFIPH'],
+    tagClass: 'blue',
+    if: (r) => r.besoins === 'embauche',
+    priorite: 6,
+  },
+  // ── Financement BPI ──
+  {
+    id: 'pretcreation', name: 'Prêt à la Création d\'Entreprise (PCE)', org: 'BPI France', emoji: '🏦',
+    montant: 'Jusqu\'à 10 000€', type: 'Prêt',
+    desc: 'Prêt BPI sans garantie ni caution personnelle, pour compléter un financement bancaire. Idéal pour les très petits projets sans apport.',
+    tags: ['BPI France', 'Prêt', 'Création'],
+    tagClass: 'blue',
+    if: (r) => ['idee','creation'].includes(r.statut) && ['moins5k','5a25k'].includes(r.montant),
+    priorite: 8,
+  },
+  {
+    id: 'pretinno', name: 'Prêt d\'Amorçage Innovation', org: 'BPI France', emoji: '⚡',
+    montant: 'Jusqu\'à 500 000€', type: 'Prêt',
+    desc: 'Prêt BPI pour les startups innovantes en phase d\'amorçage, sans garantie. Pour financer les premières années de R&D et de mise sur le marché.',
+    tags: ['BPI France', 'Startup', 'Amorçage'],
+    tagClass: 'blue',
+    if: (r) => r.secteur === 'tech' && ['25a100k','plus100k'].includes(r.montant),
+    priorite: 9,
+  },
+  // ── Agriculture ──
+  {
+    id: 'dotation_jeunes_agri', name: 'DJA — Dotation Jeunes Agriculteurs', org: 'MSA / État', emoji: '🌾',
+    montant: 'De 10 000€ à 40 000€', type: 'Subvention',
+    desc: 'Aide à l\'installation pour les jeunes agriculteurs (-40 ans). Montant variable selon la zone et le type d\'exploitation. Accompagnement obligatoire.',
+    tags: ['Agriculture', 'Jeunes', 'Installation'],
+    tagClass: 'green',
+    if: (r) => r.secteur === 'agri' && ['idee','creation','reprise'].includes(r.statut),
+    priorite: 10,
+  },
+  {
+    id: 'pcae', name: 'PCAE — Plan Compétitivité Agroéquipement', org: 'FranceAgriMer', emoji: '🚜',
+    montant: 'Jusqu\'à 40% des investissements', type: 'Subvention',
+    desc: 'Aide à la modernisation des exploitations agricoles : équipements, bâtiments, matériels. Taux de subvention variable selon la région et le type d\'investissement.',
+    tags: ['Agriculture', 'Équipement', 'Modernisation'],
+    tagClass: 'green',
+    if: (r) => r.secteur === 'agri',
+    priorite: 8,
+  },
+  // ── Reprise ──
+  {
+    id: 'aide_reprise', name: 'Aide à la reprise d\'entreprise', org: 'France Travail', emoji: '🏭',
+    montant: '50% des ARE restantes', type: 'Capital',
+    desc: 'Si vous reprenez une entreprise tout en étant demandeur d\'emploi, vous pouvez recevoir 50% de vos allocations restantes en capital pour financer la reprise.',
+    tags: ['Reprise', 'Demandeurs d\'emploi', 'Capital'],
+    tagClass: 'green',
+    if: (r) => r.statut === 'reprise' && r.situation === 'demandeur',
+    priorite: 10,
+  },
+  {
+    id: 'preinno_reprise', name: 'Prêt Transmission BPI', org: 'BPI France', emoji: '🤝',
+    montant: 'Jusqu\'à 300 000€', type: 'Prêt',
+    desc: 'Prêt BPI France spécifiquement dédié au financement de la reprise d\'une PME. Sans garantie personnelle, pour compléter le financement bancaire.',
+    tags: ['Reprise', 'BPI France', 'Prêt'],
+    tagClass: 'blue',
+    if: (r) => r.statut === 'reprise',
+    priorite: 9,
+  },
+  // ── ESS ──
+  {
+    id: 'ess_subvention', name: 'Subventions ESS & Utilité Sociale', org: 'État / Régions', emoji: '🤝',
+    montant: 'Variable', type: 'Subvention',
+    desc: 'Les structures ESS (associations, coopératives, mutuelles) peuvent accéder à des subventions spécifiques de l\'État, des régions et des fondations privées.',
+    tags: ['ESS', 'Association', 'Impact'],
+    tagClass: 'green',
+    if: (r) => r.secteur === 'social',
+    priorite: 9,
+  },
+  {
+    id: 'impact_bpi', name: 'Prêt Impact BPI', org: 'BPI France', emoji: '🌱',
+    montant: 'Jusqu\'à 200 000€', type: 'Prêt',
+    desc: 'Prêt BPI dédié aux entreprises à impact social ou environnemental. Taux avantageux et critères d\'impact mesurables requis.',
+    tags: ['ESS', 'BPI France', 'Impact'],
+    tagClass: 'green',
+    if: (r) => r.secteur === 'social',
+    priorite: 8,
+  },
+  // ── Numérique & industrie ──
+  {
+    id: 'plan_france_2030', name: 'France 2030 — Appels à projets', org: 'BPI / État', emoji: '🇫🇷',
+    montant: 'De 200k€ à plusieurs M€', type: 'Subvention compétitive',
+    desc: 'Programme d\'investissement national (54 Md€). Appels à projets dans l\'industrie verte, la santé, la tech, l\'alimentation. Très concurrentiel mais montants élevés.',
+    tags: ['Innovation', 'Industrie', 'France 2030'],
+    tagClass: 'blue',
+    if: (r) => ['tech','industrie'].includes(r.secteur) && r.montant === 'plus100k',
+    priorite: 8,
+  },
+  {
+    id: 'aide_num', name: 'Chèque Numérique France Num', org: 'Bpifrance / État', emoji: '💻',
+    montant: 'Jusqu\'à 500€', type: 'Chèque',
+    desc: 'Chèque de 500€ pour financer l\'accompagnement à la transformation numérique des TPE : site web, logiciels, e-commerce, cybersécurité.',
+    tags: ['Numérique', 'TPE', 'France Num'],
+    tagClass: 'blue',
+    if: (r) => ['commerce','service','artisanat'].includes(r.secteur),
+    priorite: 7,
+  },
+  {
+    id: 'ademe_eco', name: 'Aides ADEME Transition Écologique', org: 'ADEME', emoji: '🌿',
+    montant: 'Variable selon projet', type: 'Subvention',
+    desc: 'Aides à la réduction des consommations d\'énergie, à l\'éco-conception, à la mobilité durable et à l\'économie circulaire pour les entreprises.',
+    tags: ['Environnement', 'ADEME', 'Énergie'],
+    tagClass: 'green',
+    if: (r) => ['industrie','agri','commerce'].includes(r.secteur),
+    priorite: 7,
+  },
+  // ── Emploi / formation ──
+  {
+    id: 'cpf', name: 'CPF — Compte Personnel de Formation', org: 'Caisse des Dépôts', emoji: '📚',
+    montant: 'Jusqu\'à 800€/an', type: 'Crédit formation',
+    desc: 'Crédit formation utilisable pour se former avant de créer son entreprise : gestion, comptabilité, marketing digital, certifications professionnelles.',
+    tags: ['Formation', 'CPF', 'Universel'],
+    tagClass: 'blue',
+    if: (r) => ['idee','creation'].includes(r.statut) && ['demandeur','salarie'].includes(r.situation),
+    priorite: 7,
+  },
+  {
+    id: 'emploi_franchise', name: 'Aide Embauche PME', org: 'État', emoji: '👔',
+    montant: 'Jusqu\'à 4 000€', type: 'Aide',
+    desc: 'Aide à l\'embauche du 1er au 50ème salarié pour les PME : prime versée sur 2 ans pour tout recrutement en CDI ou CDD long.',
+    tags: ['Embauche', 'PME', 'CDI'],
+    tagClass: 'green',
+    if: (r) => r.besoins === 'embauche' && ['creation','existante'].includes(r.statut),
+    priorite: 8,
+  },
+  {
+    id: 'are_creation', name: 'Maintien ARE pendant création', org: 'France Travail', emoji: '📋',
+    montant: 'Vos allocations chômage', type: 'Maintien revenus',
+    desc: 'Alternative à l\'ARCE : continuer à percevoir vos allocations chômage mensuellement pendant la phase de création, jusqu\'à ce que votre activité soit rentable.',
+    tags: ['Demandeurs d\'emploi', 'ARE', 'Revenus'],
+    tagClass: 'green',
+    if: (r) => r.situation === 'demandeur' && ['idee','creation'].includes(r.statut),
+    priorite: 9,
+  },
+  // ── Jeunes ──
+  {
+    id: 'jeune_entrepreneur', name: 'Garantie Jeunes Entrepreneurs', org: 'BPI France', emoji: '🎓',
+    montant: 'Garantie 70% du prêt', type: 'Garantie bancaire',
+    desc: 'BPI garantit jusqu\'à 70% du prêt bancaire pour les entrepreneurs de moins de 30 ans, réduisant le risque pour la banque et facilitant l\'accès au crédit.',
+    tags: ['Jeunes -30 ans', 'Garantie', 'BPI'],
+    tagClass: 'blue',
+    if: (r) => r.situation === 'etudiant' && ['idee','creation'].includes(r.statut),
+    priorite: 9,
+  },
+  {
+    id: 'pepite', name: 'PEPITE — Statut National Étudiant-Entrepreneur', org: 'Ministère ESR', emoji: '🏫',
+    montant: 'Exonération + accompagnement', type: 'Statut',
+    desc: 'Statut permettant aux étudiants de créer leur entreprise tout en aménageant leur cursus. Exonération cotisations sociales + accès réseau et mentors.',
+    tags: ['Étudiant', 'PEPITE', 'Statut'],
+    tagClass: 'blue',
+    if: (r) => r.situation === 'etudiant',
+    priorite: 9,
+  },
+  // ── Trésorerie ──
+  {
+    id: 'pge', name: 'Prêt Garanti par l\'État (PGE)', org: 'Banque + État', emoji: '🏛️',
+    montant: 'Jusqu\'à 3 mois de CA', type: 'Prêt',
+    desc: 'Prêt bancaire garanti à 90% par l\'État. Taux avantageux, différé d\'amortissement possible. Réservé aux entreprises en difficulté conjoncturelle.',
+    tags: ['Trésorerie', 'Prêt', 'Garanti État'],
+    tagClass: 'orange',
+    if: (r) => r.besoins === 'tresorerie',
+    priorite: 8,
+  },
+  {
+    id: 'avance_remboursable', name: 'Avance Remboursable Régionale', org: 'Conseil Régional', emoji: '🔄',
+    montant: '10 000€ – 200 000€', type: 'Avance',
+    desc: 'Avances remboursables à taux nul accordées par les régions pour financer des projets de développement ou passer un cap difficile.',
+    tags: ['Régional', 'Trésorerie', 'Taux 0%'],
+    tagClass: 'orange',
+    if: (r) => r.besoins === 'tresorerie' || r.besoins === 'investissement',
+    priorite: 7,
+  },
+  // ── Universels ──
+  {
+    id: 'aides_region', name: 'Aides régionales à la création', org: 'Conseil Régional', emoji: '🗺️',
+    montant: '2 000€ – 50 000€', type: 'Subvention variable',
+    desc: 'Chaque région propose ses propres dispositifs : subventions à la création, fonds de garantie, prêts bonifiés. Montants et conditions variables.',
+    tags: ['Régional', 'Subvention', 'Universel'],
+    tagClass: 'orange',
+    if: (r) => true,
+    priorite: 5,
+  },
+  {
+    id: 'aides_cci', name: 'Dispositifs CCI & CMA', org: 'CCI / CMA', emoji: '🏛️',
+    montant: 'Variable', type: 'Accompagnement + aides',
+    desc: 'Les Chambres de Commerce et les Chambres de Métiers proposent chèques-conseils, aides à la numérisation, et accompagnement à la reprise.',
+    tags: ['CCI', 'Accompagnement', 'Local'],
+    tagClass: 'orange',
+    if: (r) => true,
+    priorite: 4,
+  },
+  {
+    id: 'microcredit', name: 'Microcrédit Adie', org: 'Adie', emoji: '🤲',
+    montant: 'Jusqu\'à 12 000€', type: 'Microcrédit',
+    desc: 'L\'Adie finance les entrepreneurs exclus du système bancaire classique. Microcrédit jusqu\'à 12 000€ + accompagnement personnalisé. Idéal pour les petits projets.',
+    tags: ['Microcrédit', 'Exclusion bancaire', 'Adie'],
+    tagClass: 'green',
+    if: (r) => ['idee','creation'].includes(r.statut) && ['moins5k','5a25k'].includes(r.montant),
+    priorite: 8,
+  },
+];
+
+// ══════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════
+
+let currentQ = 0;
+let responses = {};
+let matchedAides = [];
+
+// ══════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function updateProgress() {
+  const pct = currentQ === -1 ? 100 : Math.round((currentQ / QUESTIONS.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepLabel').textContent =
+    currentQ >= 0 && currentQ < QUESTIONS.length
+      ? `${currentQ + 1} / ${QUESTIONS.length}`
+      : '';
+}
+
+function startQuiz() {
+  currentQ = 0;
+  responses = {};
+  renderQuestion();
+  showScreen('q');
+  updateProgress();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const container = document.getElementById('screen-q');
+  container.innerHTML = `
+    <div class="q-card">
+      <div class="q-step">${q.step}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="q-hint">${q.hint}</div>
+      <div class="options" id="opts">
+        ${q.options.map(o => `
+          <button class="option ${responses[q.id] === o.val ? 'selected' : ''}"
+                  onclick="selectOption('${q.id}','${o.val}',this)">
+            <span class="opt-icon">${o.icon}</span>
+            <span><span class="opt-label">${o.label}</span><span class="opt-desc">${o.desc}</span></span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="nav-row">
+        ${currentQ > 0 ? '<button class="btn-back" onclick="prevQ()">← Retour</button>' : ''}
+        <button class="btn-next" id="btnNext"
+                onclick="nextQ()"
+                ${responses[q.id] ? '' : 'disabled'}>
+          ${currentQ < QUESTIONS.length - 1 ? 'Suivant →' : 'Voir mes aides →'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function selectOption(qId, val, el) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  responses[qId] = val;
+  document.getElementById('btnNext').disabled = false;
+}
+
+function nextQ() {
+  if (currentQ < QUESTIONS.length - 1) {
+    currentQ++;
+    updateProgress();
+    renderQuestion();
+  } else {
+    computeResults();
+    renderEmailScreen();
+    showScreen('email');
+    updateProgress();
+  }
+}
+
+function prevQ() {
+  if (currentQ > 0) { currentQ--; updateProgress(); renderQuestion(); }
+}
+
+// ══════════════════════════════════════════════════
+//  MATCHING
+// ══════════════════════════════════════════════════
+
+function computeResults() {
+  matchedAides = AIDES_DB
+    .filter(a => a.if(responses))
+    .sort((a, b) => b.priorite - a.priorite);
+}
+
+function renderEmailScreen() {
+  const preview = matchedAides.slice(0, 3).map(a => `
+    <div class="preview-item">
+      <span>${a.emoji}</span>
+      <span><strong>${a.name}</strong> — ${a.org}</span>
+      <span class="preview-euro">${a.montant}</span>
+    </div>
+  `).join('');
+  document.getElementById('emailPreview').innerHTML =
+    preview + `<div class="preview-item" style="color:var(--gray-400);font-size:.8rem;">
+      + ${matchedAides.length - 3} autres dispositifs identifiés…</div>`;
+}
+
+// ══════════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════════
+
+function showResults() {
+  const email = document.getElementById('emailInput').value;
+  if (email) sendToSheets(email);
+
+  const statutLabel = {
+    idee:'porteur de projet', creation:'en création', reprise:'repreneur', existante:'dirigeant'
+  }[responses.statut] || '';
+  const secteurLabel = {
+    commerce:'Commerce/Artisanat', service:'Services', tech:'Tech/Innovation',
+    industrie:'Industrie', agri:'Agriculture', social:'ESS'
+  }[responses.secteur] || '';
+
+  document.getElementById('resultsTitle').textContent =
+    `${matchedAides.length} dispositifs identifiés pour vous`;
+  document.getElementById('resultsSub').textContent =
+    `Profil : ${statutLabel} · ${secteurLabel}`;
+
+  const topAides = matchedAides.slice(0, 3);
+  const badges = topAides.map(a =>
+    `<div class="results-badge"><span>${a.emoji}</span> ${a.name}</div>`
+  ).join('');
+  document.getElementById('resultsMeta').innerHTML = badges;
+
+  // Total estimé
+  const totalApprox = matchedAides.length * 8000;
+  const totalBox = `
+    <div class="total-box">
+      <span class="total-icon">💎</span>
+      <div>
+        <div class="total-label">Potentiel d'aides estimé</div>
+        <div class="total-amount">jusqu'à ${totalApprox.toLocaleString('fr-FR')} €</div>
+      </div>
+    </div>`;
+
+  const prioritaires = matchedAides.filter(a => a.priorite >= 9);
+  const autres = matchedAides.filter(a => a.priorite < 9);
+
+  let html = totalBox;
+
+  if (prioritaires.length) {
+    html += `<div class="section-title">⭐ À ne pas manquer — Prioritaires</div>`;
+    html += prioritaires.map(a => renderAideCard(a, true)).join('');
+  }
+  if (autres.length) {
+    html += `<div class="section-title">📋 Autres dispositifs pour vous</div>`;
+    html += autres.map(a => renderAideCard(a, false)).join('');
+  }
+
+  document.getElementById('resultsContent').innerHTML = html;
+  showScreen('results');
+  window.scrollTo(0, 0);
+}
+
+function renderAideCard(a, priority) {
+  const borderClass = priority ? 'priority' : (a.tagClass === 'green' ? 'success-border' : a.tagClass === 'orange' ? 'warning-border' : '');
+  return `
+    <div class="aide-card ${borderClass}">
+      <div class="aide-top">
+        <span class="aide-emoji">${a.emoji}</span>
+        <div>
+          <div class="aide-name">${a.name}</div>
+          <div class="aide-org">${a.org}</div>
+        </div>
+        <div class="aide-amount">
+          <div class="aide-amount-main">${a.montant}</div>
+          <div class="aide-amount-type">${a.type}</div>
+        </div>
+      </div>
+      <div class="aide-desc">${a.desc}</div>
+      <div class="tags-row">
+        ${a.tags.map(t => `<span class="tag ${a.tagClass}">${t}</span>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════
+//  SHEETS
+// ══════════════════════════════════════════════════
+
+const SHEETS_URL = 'REMPLACER_PAR_URL_APPS_SCRIPT';
+
+function sendToSheets(email) {
+  if (!SHEETS_URL.startsWith('http')) return;
+  const data = {
+    email,
+    date: new Date().toISOString(),
+    statut: responses.statut || '',
+    secteur: responses.secteur || '',
+    situation: responses.situation || '',
+    territoire: responses.territoire || '',
+    besoins: responses.besoins || '',
+    montant: responses.montant || '',
+    nb_aides: matchedAides.length,
+    consentement: 'oui',
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).catch(() => {});
+}
+
+// ══════════════════════════════════════════════════
+//  RESTART
+// ══════════════════════════════════════════════════
+
+function restart() {
+  currentQ = 0; responses = {}; matchedAides = [];
+  updateProgress();
+  showScreen('intro');
+}
+</script>
+</body>
+</html>
